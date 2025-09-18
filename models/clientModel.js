@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const clientSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  userId:{type:String,required:[true,"User id must be entered!"]},
   email: { type: String },
   phoneNumber: { type: String },
   address: { type: String },

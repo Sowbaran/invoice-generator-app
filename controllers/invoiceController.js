@@ -3,7 +3,7 @@ const Invoice = require("../models/invoiceModel")
 
 const getAllInvoices = async(req,res) =>{
   try{
-    const invoices = await Invoice.find();
+    const invoices = await Invoice.find({ userId:req.user.id });
     res.status(200).json({
         data:invoices.length,
         invoices
@@ -18,7 +18,11 @@ const getAllInvoices = async(req,res) =>{
 const getInvoice = async(req,res) =>{
     try{
         const id = req.params.id;
-   const invoice = await Invoice.findById(id);
+      const invoice = await Invoice.findById(id);
+   if(!invoice || invoice.userId !== req.user.id ){
+    return res.status(404).json({message:"Data not found"})
+   }
+   
    res.status(200).json({
       data:invoice
    })

@@ -35,6 +35,9 @@ const createUser = async(req,res) =>{
     // res.send("Hello World from the controller create invoices")
     try{
         const body = req.body;
+        // Hash the password before saving
+        const saltRounds = 10;
+        body.password = await bcrypt.hash(body.password, saltRounds);
         const createdUser = await User.create(body);
         res.status(201).json({
             data:createdUser
@@ -93,14 +96,15 @@ try{
             message:"User not found!"
         })
     }
-    const isMatch = userData.password;
+    // Compare hashed password
+    const isMatch = await bcrypt.compare(password, userData.password);
     if(!isMatch){
         return res.status(401).json({
             message:"password is Incorrect"
         })
     }
       const token = jwt.sign({ userId: userData._id }, process.env.JWT_SECRET_KEY, { expiresIn: '312525d' });
-      res.status(200).json(token)
+      res.status(200).json({"Access Token":token})
 }catch(err){
     console.log(err);
     res.status(401).json({
