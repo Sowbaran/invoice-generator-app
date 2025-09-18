@@ -1,5 +1,7 @@
 // const invoiceModel = require("../models/invoiceModel");
 const User = require("../models/userModel")
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const getAllUsers = async(req,res) =>{
   try{
@@ -82,6 +84,40 @@ const deleteUser = async(req,res) =>{
 }
 
 
-module.exports = {getAllUsers,getUser,createUser,updateUser,deleteUser}
+const login = async(req,res)=>{
+try{
+    const {email , password} = req.body;
+    const userData = await User.findOne({email});
+    if(!userData){
+        return res.status(404).json({
+            message:"User not found!"
+        })
+    }
+    const isMatch = userData.password;
+    if(!isMatch){
+        return res.status(401).json({
+            message:"password is Incorrect"
+        })
+    }
+      const token = jwt.sign({ userId: userData._id }, process.env.JWT_SECRET_KEY, { expiresIn: '312525d' });
+      res.status(200).json(token)
+}catch(err){
+    console.log(err);
+    res.status(401).json({
+        message:"unauthorized"
+    })
+}
+}
 
 
+
+
+
+
+
+
+
+
+
+
+module.exports = {getAllUsers,getUser,createUser,updateUser,deleteUser,login}

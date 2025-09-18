@@ -8,7 +8,9 @@ const DB = require("./dbConfig/dbConnection")
 DB();
 app.use(express.json());
 
-app.use("/api",InvoiceRouter,userRouter,clientRouter)
+app.use("/api",InvoiceRouter)
+app.use("/api",userRouter)
+app.use("/api",clientRouter)
 
 app.listen(port,()=>{
     console.log(`App is listening at port ${port}`)
